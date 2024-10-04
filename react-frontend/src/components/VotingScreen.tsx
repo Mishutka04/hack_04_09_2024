@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Card } from './ui';
+import { Button, Input, Card } from './ui/';
 import { useAppState } from '../hooks/useAppState';
 import { validateVote } from '../utils/helpers';
 import {Team} from "../types/Team.ts";

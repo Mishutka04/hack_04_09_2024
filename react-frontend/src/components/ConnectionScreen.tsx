@@ -1,7 +1,7 @@
 // ConnectionScreen.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Card } from './ui';
+import { Button, Input, Card } from './ui/';
 import { useAppState } from '../hooks/useAppState';
 import APIService from "../services/APIService.ts";
 
@@ -9,7 +9,7 @@ const ConnectionScreen: React.FC = () => {
     const [connectionKey, setConnectionKey] = useState('');
     const { setCurrentHackathon } = useAppState();
     const navigate = useNavigate();
-    const apiService = APIService;
+    const apiService = APIService
 
     const handleConnection = async () => {
         try {
