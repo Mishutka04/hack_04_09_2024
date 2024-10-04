@@ -1,4 +1,4 @@
-import {toast} from "@/hooks/use-toast"
+import {useToast} from "@/hooks/use-toast"
 import {Card, CardContent} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
@@ -9,22 +9,22 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {z} from "zod";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 export function ConnectionScreenX() {
     const [loading, setLoading] = useState(true);
     const [hackathonId, setHackathonId] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const {toast} = useToast();
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const queryHackathonId = queryParams.get('hackathonId');
 
         if (!queryHackathonId) {
-            toast({
-                title: "Error",
-                description: "No hackathon ID provided in the URL.",
-            });
+            setToastMessage("Error: No hackathon ID provided in the URL.");
             setLoading(false);
             return;
         }
@@ -33,13 +33,11 @@ export function ConnectionScreenX() {
 
         const loadData = async () => {
             try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 const data = await APIService.connect(queryHackathonId);
                 // setCurrentHackathon(data.hackathon);
             } catch (error) {
-                toast({
-                    title: "Error",
-                    description: `Failed to connect to the hackathon.: ${error}`,
-                });
+                setToastMessage(`Error: Failed to connect to the hackathon.: ${error}`);
             }
             setLoading(false);
         };
@@ -47,9 +45,13 @@ export function ConnectionScreenX() {
         loadData();
     }, [location.search]);
 
+    useEffect(() => {
+        toast({description: toastMessage});
+    }, [toastMessage]);
+
     const handleUsernameSubmit = async (name: string) => {
         if (hackathonId === null) {
-            toast({title: "Error", description: "Something went wrong and this is a bug"});
+            setToastMessage("Error: Something went wrong and this is a bug.");
             return;
         }
 
@@ -63,27 +65,25 @@ export function ConnectionScreenX() {
         }
     };
 
-    if (loading) {
-        return <div>Loading competition data...</div>;
-    }
-
-    return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background">
-            <div className="mx-auto max-w-md w-full space-y-6 px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold tracking-tight text-primary">Hackathon Jury</h1>
-                    <p className="mt-2 text-sm text-muted-foreground">April 15th - April 17th, 2024</p>
-                </div>
-                <Card>
-                    <CardContent className="p-6">
-                        <NameForm onSubmit={(data) => {
-                            handleUsernameSubmit(data.username)
-                        }}/>
-                    </CardContent>
-                </Card>
+    return <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+        <div className="mx-auto max-w-md w-full space-y-6 px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+                {loading
+                    ? <Skeleton className={"h-10 w-[200px] mx-auto rounded-br mb-2"}/>
+                    : <h1 className="text-3xl font-bold tracking-tight text-primary">Hackathon Jury</h1>}
+                {loading
+                    ? <Skeleton className={"h-7 w-[100px] mx-auto rounded-br"}/>
+                    : <p className="mt-2 text-sm text-muted-foreground">April 15th - April 17th, 2024</p>}
             </div>
+            <Card>
+                <CardContent className="p-6">
+                    <NameForm onSubmit={(data) => {
+                        handleUsernameSubmit(data.username)
+                    }}/>
+                </CardContent>
+            </Card>
         </div>
-    )
+    </div>
 }
 
 const FormSchema = z.object({
@@ -100,27 +100,22 @@ function NameForm({onSubmit}: { onSubmit: (data: z.infer<typeof FormSchema>) => 
         },
     })
 
-    return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={"space-y-4"}>
-                <div>
-                    <FormField
-                        control={form.control}
-                        name="username"
-                        render={({field}) => (
-                            <FormItem>
-                                {/*In browser: class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"*/}
-                                <FormLabel className={"text-base font-normal"}>Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter your name" {...field} />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <Button type="submit" className="w-full">Submit</Button>
-            </form>
-        </Form>
-    )
+    return <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={"space-y-4"}>
+            <div>
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({field}) => <FormItem>
+                        <FormLabel className={"text-base font-normal"}>Name</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Enter your name" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>}
+                />
+            </div>
+            <Button type="submit" className="w-full">Submit</Button>
+        </form>
+    </Form>
 }
