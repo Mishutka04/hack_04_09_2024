@@ -1,4 +1,3 @@
-// ConnectionScreen.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Input, Card } from './ui/';
