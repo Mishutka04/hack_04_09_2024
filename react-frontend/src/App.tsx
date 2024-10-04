@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ConnectionScreen from './components/ConnectionScreen.tsx';
-import VotingScreen from './components/VotingScreen.tsx';
+// import VotingScreen from './components/VotingScreen.tsx';
 import {AppStateProvider} from "./hooks/useAppState.tsx";
+import {VotingScreenX} from "@/components/VotingScreenX.tsx";
 
 const App: React.FC = () => {
     return (
@@ -10,7 +11,7 @@ const App: React.FC = () => {
             <Router>
                 <Routes>
                     <Route path="/" element={<ConnectionScreen />} />
-                    <Route path="/vote" element={<VotingScreen />} />
+                    <Route path="/vote" element={<VotingScreenX />} />
                 </Routes>
             </Router>
         </AppStateProvider>
