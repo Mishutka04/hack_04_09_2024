@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button"
 import {Slider} from "@/components/ui/slider"
 import {Textarea} from "@/components/ui/textarea"
 import {Link} from "react-router-dom";
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {
     Select,
     SelectContent,
@@ -13,7 +13,135 @@ import {
     SelectValue
 } from "@/components/ui/select.tsx";
 
+interface Criterion {
+    id: string;
+    label: string;
+    type: 'slider' | 'select' | 'text';
+    max?: number;
+    step?: number;
+    options?: { value: string; label: string }[];
+    rows?: number;
+    placeholder?: string;
+}
+
+const SliderCriterion: React.FC<{ criterion: Criterion }> = ({criterion}) => {
+    return <div className="grid gap-1">
+        <label htmlFor={criterion.id} className="text-sm font-medium">
+            {criterion.label}
+        </label>
+        <Slider defaultValue={[3]} max={criterion.max} step={criterion.step}/>
+    </div>;
+};
+
+const SelectCriterion: React.FC<{ criterion: Criterion }> = ({criterion}) => {
+    return <div className="grid gap-1">
+        <label htmlFor={criterion.id} className="text-sm font-medium">
+            {criterion.label}
+        </label>
+        <Select>
+            <SelectTrigger>
+                <SelectValue placeholder={`Select ${criterion.label.toLowerCase()}`}/>
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    {criterion.options?.map((option) => <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                    </SelectItem>)}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    </div>;
+};
+
+const TextCriterion: React.FC<{ criterion: Criterion }> = ({criterion}) => {
+    return <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">{criterion.label}</h2>
+        </div>
+        <Textarea
+            placeholder={criterion.placeholder}
+            rows={criterion.rows}
+            className="resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+    </div>;
+};
+
+interface Team {
+    id: string;
+    name: string;
+}
+
+const TeamLink: React.FC<{ team: Team }> = ({team}) => {
+    return <Link
+        to="#"
+        className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
+    >
+        <GroupIcon className="h-5 w-5"/>
+        {team.name}
+    </Link>;
+};
+
+const mockFetchTeams = (): Promise<Team[]> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve([
+                {id: 'team-a', name: 'Team A'},
+                {id: 'team-b', name: 'Team B'},
+                {id: 'team-c', name: 'Team C'},
+                {id: 'team-d', name: 'Team D'},
+                {id: 'team-e', name: 'Team E'},
+            ]);
+        }, 800); // Simulate network delay
+    });
+};
+
+const mockFetchCriteria = (): Promise<Criterion[]> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve([
+                {id: 'innovation', label: 'Innovation', type: 'slider', max: 5, step: 1},
+                {id: 'design', label: 'Design', type: 'slider', max: 5, step: 1},
+                {id: 'functionality', label: 'Functionality', type: 'slider', max: 5, step: 1},
+                {id: 'presentation', label: 'Presentation', type: 'slider', max: 5, step: 1},
+                {id: 'impact', label: 'Impact', type: 'slider', max: 5, step: 1},
+                {
+                    id: 'city',
+                    label: 'City',
+                    type: 'select',
+                    options: [
+                        {value: 'moscow', label: 'Moscow'},
+                        {value: 'saint-petersburg', label: 'Saint Petersburg'},
+                        {value: 'novosibirsk', label: 'Novosibirsk'},
+                    ]
+                },
+                {
+                    id: 'comments',
+                    label: 'Comments',
+                    type: 'text',
+                    rows: 4,
+                    placeholder: 'Enter your comments here...'
+                },
+                {
+                    id: 'notes',
+                    label: 'Notes',
+                    type: 'text',
+                    rows: 4,
+                    placeholder: 'Enter your notes here...'
+                },
+            ]);
+        }, 2000);
+    });
+};
+
 export function VotingScreenX() {
+    const [criteria, setCriteria] = useState<Criterion[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
+
+    useEffect(() => {
+        mockFetchCriteria().then(setCriteria);
+        mockFetchTeams().then(setTeams);
+    }, []);
+
     return <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <header
             className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4">
@@ -26,41 +154,9 @@ export function VotingScreenX() {
                 </SheetTrigger>
                 <SheetContent side="left">
                     <nav className="grid gap-4 p-4 text-lg font-medium">
-                        <Link
-                            to="#"
-                            className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <GroupIcon className="h-5 w-5"/>
-                            Team A
-                        </Link>
-                        <Link
-                            to="#"
-                            className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <GroupIcon className="h-5 w-5"/>
-                            Team B
-                        </Link>
-                        <Link
-                            to="#"
-                            className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <GroupIcon className="h-5 w-5"/>
-                            Team C
-                        </Link>
-                        <Link
-                            to="#"
-                            className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <GroupIcon className="h-5 w-5"/>
-                            Team D
-                        </Link>
-                        <Link
-                            to="#"
-                            className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <GroupIcon className="h-5 w-5"/>
-                            Team E
-                        </Link>
+                        {teams.map((team) => (
+                            <TeamLink key={team.id} team={team}/>
+                        ))}
                     </nav>
                 </SheetContent>
             </Sheet>
@@ -82,65 +178,18 @@ export function VotingScreenX() {
                         <h2 className="text-2xl font-bold">Criteria</h2>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <div className="grid gap-1">
-                            <label htmlFor="innovation" className="text-sm font-medium">
-                                Innovation
-                            </label>
-                            <Slider defaultValue={[3]} max={5} step={1}/>
-                        </div>
-                        <div className="grid gap-1">
-                            <label htmlFor="design" className="text-sm font-medium">
-                                Design
-                            </label>
-                            <Slider defaultValue={[4]} max={5} step={1}/>
-                        </div>
-                        <div className="grid gap-1">
-                            <label htmlFor="functionality" className="text-sm font-medium">
-                                Functionality
-                            </label>
-                            <Slider defaultValue={[4]} max={5} step={1}/>
-                        </div>
-                        <div className="grid gap-1">
-                            <label htmlFor="presentation" className="text-sm font-medium">
-                                Presentation
-                            </label>
-                            <Slider defaultValue={[3]} max={5} step={1}/>
-                        </div>
-                        <div className="grid gap-1">
-                            <label htmlFor="impact" className="text-sm font-medium">
-                                Impact
-                            </label>
-                            <Slider defaultValue={[4]} max={5} step={1}/>
-                        </div>
-                        <div className="grid gap-1">
-                            <label htmlFor="overall" className="text-sm font-medium">
-                                City
-                            </label>
-                            <Select>
-                                <SelectTrigger >
-                                    <SelectValue placeholder="Select city"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="moscow">Moscow</SelectItem>
-                                        <SelectItem value="saint-petersburg">Saint Petersburg</SelectItem>
-                                        <SelectItem value="novosibirsk">Novosibirsk</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {criteria.filter(c => c.type !== 'text').map((criterion) => (
+                            criterion.type === 'slider' ? (
+                                <SliderCriterion key={criterion.id} criterion={criterion}/>
+                            ) : (
+                                <SelectCriterion key={criterion.id} criterion={criterion}/>
+                            )
+                        ))}
                     </div>
                 </div>
-                <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">Comments</h2>
-                    </div>
-                    <Textarea
-                        placeholder="Enter your comments here..."
-                        rows={4}
-                        className="resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                </div>
+                {criteria.filter(c => c.type === 'text').map((criterion) => (
+                    <TextCriterion key={criterion.id} criterion={criterion}/>
+                ))}
             </div>
         </main>
     </div>
