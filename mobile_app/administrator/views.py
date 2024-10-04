@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
 import segno
+import uuid
 
 from exspert.models import ScoringPoints
 
@@ -72,12 +73,19 @@ class ScoringPointsListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]  
 
 class GenerateQRHackView(APIView):
-    def get(self, request):
-        code = request.GET.get('code', 'Undefined')
-        if not code or ';' in code:
+    def post(self, request):
+        hack_pk = request.data['hack_pk']
+        if not hack_pk:
             return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
                 # создаем код
-        qrcode = segno.make_qr("asdasd")
+        hack = Hack.objects.get(pk=hack_pk)
+        if not hack:
+            return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
+                # создаем код
+        uuid1 = uuid.uuid1()
+        print(f'UUID Version 1: {uuid1}')
+        QRCodeHack.objects.create(code = uuid1, hack=hack)
+        qrcode = segno.make_qr(f"http://127.0.0.1:8000/api/generator/?code={uuid1}")
         # сохраняем его в файл "metanit_qr.png"
         qrcode.save("metanit_qr.png", scale=5) 
         try:
@@ -92,6 +100,7 @@ class GenerateQRHackView(APIView):
         return response
             
 class ConnectUserToHackView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         code = request.GET.get('code', 'Undefined')
         if not code or ';' in code:

@@ -28,3 +28,5 @@ class Exspert(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     hack = models.ForeignKey(Hack, on_delete=models.CASCADE)
 # Create your models here.
+class Administrator(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
