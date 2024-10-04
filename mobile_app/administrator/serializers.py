@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
-from mobile_app.administrator.models import Criteria, Hack, Team
-from mobile_app.exspert.models import ScoringPoints
+from .models import Criteria, Hack, Team
+from exspert.models import ScoringPoints
 
 
 class CreateHackSerializer(serializers.ModelSerializer):

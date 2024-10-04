@@ -1,12 +1,14 @@
 from django.db import models
 
-from mobile_app.authentication.models import User
+from authentication.models import User
+from administrator.models import Criteria, Hack, Team
+
 
 # Create your models here.
 
 class ScoringPoints(models.Model):
     ball = models.IntegerField()
-    criteria = models.ForeignKey('criteria', on_delete=models.CASCADE)
-    hack = models.ForeignKey('hack', on_delete=models.CASCADE)
-    team = models.ForeignKey('team', on_delete=models.CASCADE)
+    criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
+    hack = models.ForeignKey(Hack, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     exspert = models.ForeignKey(User, on_delete=models.CASCADE)

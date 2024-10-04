@@ -1,11 +1,17 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
-from mobile_app.administrator.models import Criteria, Hack, Team
-from mobile_app.administrator.serializers import CreateHackSerializer, CriteriaSerializer, HackSerializer, ScoringPointsSerializer, TeamSerializer
+from administrator.models import Criteria, Exspert, Hack, QRCodeHack, Team
+from administrator.serializers import CreateHackSerializer, CriteriaSerializer, HackSerializer, ScoringPointsSerializer, TeamSerializer
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import HttpResponse
+from django.http import HttpResponse
+from django.core.files.storage import default_storage
+import uuid
 
-from mobile_app.exspert.models import ScoringPoints
+from exspert.models import ScoringPoints
 
 class CreateHackAPIView(APIView):
 
@@ -64,5 +70,47 @@ class ScoringPointsListView(generics.ListAPIView):
     serializer_class = ScoringPointsSerializer
     queryset = ScoringPoints.objects.all()
     permission_classes = [IsAuthenticated]  
- 
+
+class GenerateQRHackView(APIView):
+    def post(self, request):
+        hack_pk = request.data['hack_pk']
+        if not hack_pk:
+            return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
+                # создаем код
+        hack = Hack.objects.get(pk=hack_pk)
+        if not hack:
+            return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
+                # создаем код
+        uuid1 = uuid.uuid1()
+        print(f'UUID Version 1: {uuid1}')
+        QRCodeHack.objects.create(code = uuid1, hack=hack)
+        qrcode = segno.make_qr(f"http://127.0.0.1:8000/api/generator/?code={uuid1}")
+        # сохраняем его в файл "metanit_qr.png"
+        qrcode.save("metanit_qr.png", scale=5) 
+        try:
+            with default_storage.open('metanit_qr.png', 'rb') as image_file:
+                response = HttpResponse(image_file.read(), content_type='image/jpeg')
+                response['Content-Disposition'] = 'attachment; filename="image.jpg"'
+                return response
+        except FileNotFoundError:
+            return HttpResponse(status=404)  # Возвращаем 404, если файл не найден
+
+        
+        return response
+            
+class ConnectUserToHackView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        code = request.GET.get('code', 'Undefined')
+        if not code or ';' in code:
+            return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)      
+        code_accept = QRCodeHack.objects.get(code = code)
+        if not code_accept:
+            return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)      
+        Exspert.objects.create(user = request.user, hack=code_accept.hack)
+        return Response({'status': 'Ok'}, status=status.HTTP_200_OK) 
+            
+            
+                  
+        
 # Create your views here.
