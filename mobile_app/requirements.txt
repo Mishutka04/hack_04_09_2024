@@ -11,3 +11,4 @@ PyJWT==1.7.1
 pydub==0.25.1
 requests==2.32.3
 python-environ==0.4.54
+segno
