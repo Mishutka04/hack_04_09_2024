@@ -4,6 +4,8 @@ import '../controllers/voting_controller.dart';
 import '../state/state_management.dart';
 
 class VotingScreen extends StatefulWidget {
+  const VotingScreen({super.key});
+
   @override
   _VotingScreenState createState() => _VotingScreenState();
 }
@@ -22,12 +24,12 @@ class _VotingScreenState extends State<VotingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vote for Team'),
+        title: const Text('Vote for Team'),
       ),
       body: Form(
         key: _formKey,
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -37,12 +39,12 @@ class _VotingScreenState extends State<VotingScreen> {
                   if (hackathon != null) {
                     return Text('Voting for: ${hackathon.name}');
                   }
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Rank (1-5)'),
+                decoration: const InputDecoration(labelText: 'Rank (1-5)'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -56,9 +58,9 @@ class _VotingScreenState extends State<VotingScreen> {
                 },
                 onSaved: (value) => _rank = int.parse(value!),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Comment'),
+                decoration: const InputDecoration(labelText: 'Comment'),
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -68,7 +70,7 @@ class _VotingScreenState extends State<VotingScreen> {
                 },
                 onSaved: (value) => _comment = value,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
@@ -76,7 +78,7 @@ class _VotingScreenState extends State<VotingScreen> {
                     await controller.submitVote(_rank!, _comment!);
                   }
                 },
-                child: Text('Submit Vote'),
+                child: const Text('Submit Vote'),
               ),
             ],
           ),

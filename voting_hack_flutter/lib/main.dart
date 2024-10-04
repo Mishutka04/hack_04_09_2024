@@ -14,12 +14,14 @@ void main() {
         Provider(create: (_) => NavigationService()),
         Provider(create: (_) => APIService()),
       ],
-      child: MainApp(),
+      child: const MainApp(),
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final NavigationService navigationService =
@@ -36,11 +38,11 @@ class MainApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
-            return MaterialPageRoute(builder: (_) => QRScannerScreen());
+            return MaterialPageRoute(builder: (_) => const QRScannerScreen());
           case '/voting':
-            return MaterialPageRoute(builder: (_) => VotingScreen());
+            return MaterialPageRoute(builder: (_) => const VotingScreen());
           default:
-            return MaterialPageRoute(builder: (_) => QRScannerScreen());
+            return MaterialPageRoute(builder: (_) => const QRScannerScreen());
         }
       },
     );
