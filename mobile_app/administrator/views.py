@@ -24,7 +24,7 @@ class CreateHackAPIView(APIView):
 
         if serializer.is_valid():
             hack = serializer.save()  # Сохраняем объект хак
-            return Response({'message': 'Хак успешно создан', 'hack_id': hack.id}, status=status.HTTP_201_CREATED)
+            return Response({'hack_id': hack.id}, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -33,7 +33,7 @@ class BallAPIUpdate(generics.UpdateAPIView):
     queryset = ScoringPoints.objects.all()
     serializer_class = ScoringPointsSerializer
 
-class BallAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+class BallAPIDetailView(generics.CreateAPIView):
     queryset = ScoringPoints.objects.all()
     serializer_class = ScoringPointsSerializer
     

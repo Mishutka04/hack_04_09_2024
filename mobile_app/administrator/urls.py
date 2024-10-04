@@ -17,6 +17,7 @@ urlpatterns = [
     path('team/description/<int:pk>/', views.TeamListView.as_view(), name='auth_email'),
     
     path('create/hack/', views.CreateHackAPIView.as_view(), name='auth_email'),
+    path('create/point/', views.BallAPIDetailView.as_view(), name='auth_email'),
     
     
      
