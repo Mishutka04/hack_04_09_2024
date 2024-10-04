@@ -14,6 +14,8 @@ import {Skeleton} from "@/components/ui/skeleton.tsx";
 export function ConnectionScreen() {
     const [loading, setLoading] = useState(true);
     const [hackathonId, setHackathonId] = useState<string | null>(null);
+    const [hackathonName, setHackathonName] = useState<string | null>(null);
+    const [hackathonDates, setHackathonDates] = useState<string | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -35,7 +37,8 @@ export function ConnectionScreen() {
             try {
                 await new Promise(resolve => setTimeout(resolve, 3000));
                 const data = await APIService.connect(queryHackathonId);
-                // setCurrentHackathon(data.hackathon);
+                setHackathonName(data.hackathon.name)
+                setHackathonDates(`${data.hackathon.startDate.toLocaleDateString()} - ${data.hackathon.endDate.toLocaleDateString()}`);
             } catch (error) {
                 setToastMessage(`Error: Failed to connect to the hackathon.: ${error}`);
             }
@@ -56,12 +59,10 @@ export function ConnectionScreen() {
         }
 
         try {
-            await APIService.createUser(name, hackathonId);
-            //get user token
-            navigate('/vote');
+            const userToken = await APIService.createUser(name, hackathonId);
+            navigate(`/vote?hackathonId=${hackathonId}&userToken=${userToken}`);
         } catch (error) {
-            console.error('Connection failed:', error);
-            // TODO: Handle error (e.g., show error message to user)
+            setToastMessage(`Error: Failed to create user: ${error}`);
         }
     };
 
@@ -70,10 +71,10 @@ export function ConnectionScreen() {
             <div className="text-center">
                 {loading
                     ? <Skeleton className={"h-10 w-[200px] mx-auto rounded-br mb-2"}/>
-                    : <h1 className="text-3xl font-bold tracking-tight text-primary">Hackathon Jury</h1>}
+                    : <h1 className="text-3xl font-bold tracking-tight text-primary">{hackathonName}</h1>}
                 {loading
                     ? <Skeleton className={"h-7 w-[100px] mx-auto rounded-br"}/>
-                    : <p className="mt-2 text-sm text-muted-foreground">April 15th - April 17th, 2024</p>}
+                    : <p className="mt-2 text-sm text-muted-foreground">{hackathonDates}</p>}
             </div>
             <Card>
                 <CardContent className="p-6">
