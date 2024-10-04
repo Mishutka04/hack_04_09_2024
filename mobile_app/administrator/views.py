@@ -9,7 +9,6 @@ from rest_framework import status
 from django.http import HttpResponse
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
-import segno
 import uuid
 
 from exspert.models import ScoringPoints

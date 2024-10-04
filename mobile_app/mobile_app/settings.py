@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'authentication',
     'exspert',
-    'administrator'
+    'administrator',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
