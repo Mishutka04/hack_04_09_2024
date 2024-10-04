@@ -8,7 +8,7 @@ from exspert.models import ScoringPoints
 class CreateHackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hack
-        fields = "__all__"
+        fields = ['name', 'descriptions', 'data_start', 'data_end', 'administrator']
         
 class HackSerializer(serializers.ModelSerializer):
     class Meta:

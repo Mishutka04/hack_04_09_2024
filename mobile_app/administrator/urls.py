@@ -9,6 +9,13 @@ urlpatterns = [
     path('hack/', views.HackListView.as_view(), name='auth_email'),
     path('hack/<int:pk>/', views.HackListView.as_view(), name='auth_email'),
     
+    path('criteria/<int:pk>/', views.CriteriaListView.as_view(), name='auth_email'),
+    path('points/hack/<int:hack_id>/', views.ScoringPointsListView.as_view(), name='auth_email'),
+    path('points/user/<int:user_id>/', views.ScoringPointsListView.as_view(), name='auth_email'),
+    
+    path('team/hack/<int:hack_id>/', views.TeamListView.as_view(), name='auth_email'),
+    path('team/description/<int:pk>/', views.TeamListView.as_view(), name='auth_email'),
+    
     path('create/hack/', views.CreateHackAPIView.as_view(), name='auth_email'),
     
     

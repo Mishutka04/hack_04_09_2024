@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="ru">
 
 <head>
@@ -19,14 +19,14 @@
         let a = [];
         document.getElementById('fetchTeamsButton').addEventListener('click', function () {
 
-            console.log(2312)
-            var now = new Date();
-            axios.post('http://127.0.0.1:8000/api/create/hack/', {
-                name: "sdasd", descriptions: "sdasd", data_start: now, data_end: now
-                , headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8" }
+            axios.get('http://127.0.0.1:8000/api/team/description/1/', {
+                headers: {
+                    Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjUwMjI5LCJpYXQiOjE3MjgwNTgyMjksImp0aSI6IjgwNjRhZTVkMGEyNDRmMTA4YzY0NWI2ZDcwZGVlOGQ5IiwidXNlcl9pZCI6NiwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjM0MjMifQ.fEG9pS2rgNExpyPtpNaH-H_cDgBhdb_V9bRwJQM554M"
+                }
             })
                 .then(function (response) {
                     a = response.data;
+                    console.log(a)
 
                 })
                 .catch(function (error) {

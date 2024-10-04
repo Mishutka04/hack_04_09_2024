@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
+import segno
 from administrator.models import Criteria, Exspert, Hack, QRCodeHack, Team
 from administrator.serializers import CreateHackSerializer, CriteriaSerializer, HackSerializer, ScoringPointsSerializer, TeamSerializer
 from rest_framework.views import APIView
@@ -16,14 +17,18 @@ from exspert.models import ScoringPoints
 class CreateHackAPIView(APIView):
 
     def post(self, request):
-        request.data['administrator'] = request.user
+        print(request.user)  # Для отладки
+        request.data['administrator'] = request.user.id  # Передаем ID пользователя
         serializer = CreateHackSerializer(data=request.data)
-        print(request.data)
-        if serializer.is_valid():
-            " Добавление ключа "
-            user = serializer.save()
-        return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+        if serializer.is_valid():
+            hack = serializer.save()  # Сохраняем объект хак
+            return Response({'message': 'Хак успешно создан', 'hack_id': hack.id}, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class BallAPIUpdate(generics.UpdateAPIView):
     queryset = ScoringPoints.objects.all()
     serializer_class = ScoringPointsSerializer
@@ -62,17 +67,30 @@ class TeamListView(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         if 'pk' in self.kwargs:
             return Team.objects.filter(pk=self.kwargs['pk'])
-        return Team.objects.all()       
+        if 'hack_id' in self.kwargs:
+            return Team.objects.filter(hack__pk=self.kwargs['hack_id'])
+    
     
 class CriteriaListView(generics.ListAPIView):
     serializer_class = CriteriaSerializer
     queryset = Criteria.objects.all()
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]
+      
+    
+    def get_queryset(self, *args, **kwargs):
+        if 'pk' in self.kwargs:
+            return Criteria.objects.filter(hack__pk=self.kwargs['pk'])    
 
 class ScoringPointsListView(generics.ListAPIView):
     serializer_class = ScoringPointsSerializer
     queryset = ScoringPoints.objects.all()
     permission_classes = [IsAuthenticated]  
+    
+    def get_queryset(self, *args, **kwargs):
+        if 'hack_id' in self.kwargs:
+            return ScoringPoints.objects.filter(hack__pk=self.kwargs['hack_id'])   
+        if 'user_id' in self.kwargs:
+            return ScoringPoints.objects.filter(exspert__pk=self.kwargs['user_id'])   
 
 class GenerateQRHackView(APIView):
     def post(self, request):
