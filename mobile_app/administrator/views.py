@@ -33,7 +33,7 @@ class BallAPIUpdate(generics.UpdateAPIView):
     queryset = ScoringPoints.objects.all()
     serializer_class = ScoringPointsSerializer
 
-class BallAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+class BallAPIDetailView(generics.CreateAPIView):
     queryset = ScoringPoints.objects.all()
     serializer_class = ScoringPointsSerializer
     

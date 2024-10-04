@@ -27,8 +27,8 @@ axios.get('http://127.0.0.1:8000/api/criteria/1/', {
 })
     .then(function (response) {
         let name = response.data[0].name; // Имя
-        let max_ball = response.data[0].descriptions; // Макс балл
-        let hack = response.data[0].data_start; // ID хакатона
+        let max_ball = response.data[0].max_ball; // Макс балл
+        let hack = response.data[0].hack; // ID хакатона
         let id = response.data[0].id; // ID записи
 
     })
@@ -47,11 +47,11 @@ axios.get('http://127.0.0.1:8000/api/points/hack/1/', {
     }
 })
     .then(function (response) {
-        let ball = response.data[0].name; // Балл
-        let criteria = response.data[0].descriptions; // ID критерия
-        let hack = response.data[0].data_start; // ID хакатона
-        let team = response.data[0].data_start; // ID команды
-        let exspert = response.data[0].data_start; // ID эксперта
+        let ball = response.data[0].ball; // Балл
+        let criteria = response.data[0].criteria; // ID критерия
+        let hack = response.data[0].hack; // ID хакатона
+        let team = response.data[0].team; // ID команды
+        let exspert = response.data[0].exspert; // ID эксперта
         let id = response.data[0].id; // ID записи
 
     })
@@ -70,11 +70,11 @@ axios.get('http://127.0.0.1:8000/api/points/user/1/', {
     }
 })
     .then(function (response) {
-        let ball = response.data[0].name; // Балл
-        let criteria = response.data[0].descriptions; // ID критерия
-        let hack = response.data[0].data_start; // ID хакатона
-        let team = response.data[0].data_start; // ID команды
-        let exspert = response.data[0].data_start; // ID эксперта
+        let ball = response.data[0].ball; // Балл
+        let criteria = response.data[0].criteria; // ID критерия
+        let hack = response.data[0].hack; // ID хакатона
+        let team = response.data[0].team; // ID команды
+        let exspert = response.data[0].exspert; // ID эксперта
         let id = response.data[0].id; // ID записи
 
     })
@@ -94,7 +94,7 @@ axios.get('http://127.0.0.1:8000/api/team/hack/1/', {
     .then(function (response) {
         let name = response.data[0].name; // Имя
         let descriptions = response.data[0].descriptions; // Описание
-        let hack = response.data[0].data_start; // ID хакатона
+        let hack = response.data[0].hack; // ID хакатона
         let id = response.data[0].id; // ID записи
 
     })
@@ -116,7 +116,7 @@ axios.get('http://127.0.0.1:8000/api/team/description/1/', {
     .then(function (response) {
         let name = response.data[0].name; // Имя
         let descriptions = response.data[0].descriptions; // Описание
-        let hack = response.data[0].data_start; // ID хакатона
+        let hack = response.data[0].hack; // ID хакатона
         let id = response.data[0].id; // ID записи
 
     })
@@ -154,9 +154,10 @@ axios.post('http://127.0.0.1:8000/api/create/hack/',
 
 // Генерация QR code для хакатона и его скачивание
 axios.post('http://127.0.0.1:8000/api/generator/',
-    { hack_pk: 1 // ID хакатона
+    {
+        hack_pk: 1 // ID хакатона
 
-     },
+    },
     {
         responseType: 'blob', headers: {
             Authorization: "Bearer " + bearer
@@ -186,7 +187,7 @@ axios.post('http://127.0.0.1:8000/api/generator/',
 // Привязка Жюри по QR
 
 let code = "8ff6f2be-8263-11ef-bca1-70d82354725d" // Код из QR кода
-axios.get('http://127.0.0.1:8000/api/link/exspert/?code=' + code, 
+axios.get('http://127.0.0.1:8000/api/link/exspert/?code=' + code,
     {
         headers: {
             Authorization: "Bearer " + bearer
@@ -203,4 +204,20 @@ axios.get('http://127.0.0.1:8000/api/link/exspert/?code=' + code,
     });
 
 
+// Отправка решение о 
+
+
+
+axios.post('http://127.0.0.1:8000/api/create/point/', { ball: ball, criteria: criteria, hack: hack, team: team, exspert: exspert }, {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
+    .then(function (response) {
+        console.log(response.data)
+    })
+    .catch(function (error) {
+        console.log(error);
+
+    });
 

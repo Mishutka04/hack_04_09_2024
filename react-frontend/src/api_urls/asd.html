@@ -19,14 +19,19 @@
         document.getElementById('fetchTeamsButton').addEventListener('click', function () {
 
             let bearer = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjUwMjI5LCJpYXQiOjE3MjgwNTgyMjksImp0aSI6IjgwNjRhZTVkMGEyNDRmMTA4YzY0NWI2ZDcwZGVlOGQ5IiwidXNlcl9pZCI6NiwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjM0MjMifQ.fEG9pS2rgNExpyPtpNaH-H_cDgBhdb_V9bRwJQM554M";
-            axios.get('http://127.0.0.1:8000/api/points/hack/0/', {
+            axios.post('http://127.0.0.1:8000/api/create/point/', { ball: 5, criteria: 1, hack: 1, team: 1, exspert: 1 }, {
                 headers: {
                     Authorization: "Bearer " + bearer
                 }
             })
                 .then(function (response) {
-                    a = response.data;
-
+                    console.log(response.data)
+                    let ball = response.data[0].ball; // Балл
+                    let criteria = response.data[0].criteria; // ID критерия
+                    let hack = response.data[0].hack; // ID хакатона
+                    let team = response.data[0].team; // ID команды
+                    let exspert = response.data[0].exspert; // ID эксперта
+                    let id = response.data[0].id; // ID записи
                 })
                 .catch(function (error) {
                     console.log(error);
