@@ -16,11 +16,13 @@ from exspert.models import ScoringPoints
 class CreateHackAPIView(APIView):
 
     def post(self, request):
-        request.data['user'] = request.user
+        request.data['administrator'] = request.user
         serializer = CreateHackSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             " Добавление ключа "
             user = serializer.save()
+        return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
 
 class BallAPIUpdate(generics.UpdateAPIView):
     queryset = ScoringPoints.objects.all()
@@ -39,6 +41,7 @@ class AddBallAPIView(APIView):
         if serializer.is_valid():
             " Добавление ключа "
             user = serializer.save() 
+        return Response({'error': 'Некорректное значение для имени'}, status=status.HTTP_400_BAD_REQUEST)
             
 class HackListView(generics.ListAPIView):
     serializer_class = HackSerializer

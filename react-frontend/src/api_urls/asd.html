@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Получение списка команд</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <h1>Список команд</h1>
+    <button id="fetchTeamsButton">Получить список команд</button>
+
+    <div id="teamsList"></div>
+
+    <script>
+        let a = [];
+        document.getElementById('fetchTeamsButton').addEventListener('click', function () {
+
+            console.log(2312)
+            var now = new Date();
+            axios.post('http://127.0.0.1:8000/api/create/hack/', {
+                name: "sdasd", descriptions: "sdasd", data_start: now, data_end: now
+                , headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8" }
+            })
+                .then(function (response) {
+                    a = response.data;
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+
+                });
+        });
+
+    </script>
+
+</body>
+
+</html>

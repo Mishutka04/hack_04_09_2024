@@ -8,6 +8,9 @@ urlpatterns = [
     path('link/exspert/', views.ConnectUserToHackView.as_view(), name='auth_email'),
     path('hack/', views.HackListView.as_view(), name='auth_email'),
     path('hack/<int:pk>/', views.HackListView.as_view(), name='auth_email'),
-     
+    
+    path('create/hack/', views.CreateHackAPIView.as_view(), name='auth_email'),
+    
+    
      
 ]

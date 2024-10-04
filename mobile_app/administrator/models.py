@@ -30,3 +30,8 @@ class Exspert(models.Model):
 # Create your models here.
 class Administrator(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class AdministratorCode(models.Model):
+    code = models.CharField(max_length=50)
+    data_finish = models.DateField()
+    
