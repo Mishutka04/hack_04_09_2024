@@ -29,6 +29,7 @@ export const AppStateProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAppState = () => {
     const context = useContext(AppStateContext);
     if (context === undefined) {
