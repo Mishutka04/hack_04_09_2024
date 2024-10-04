@@ -1,10 +1,15 @@
 // Получение списка хаков
 
 let a = []
-
-axios.get('http://127.0.0.1:8000/api/hack/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8" } })
+let bearer = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjUwMjI5LCJpYXQiOjE3MjgwNTgyMjksImp0aSI6IjgwNjRhZTVkMGEyNDRmMTA4YzY0NWI2ZDcwZGVlOGQ5IiwidXNlcl9pZCI6NiwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjM0MjMifQ.fEG9pS2rgNExpyPtpNaH-H_cDgBhdb_V9bRwJQM554M"
+axios.get('http://127.0.0.1:8000/api/hack/', { headers: { Authorization: "Bearer " + bearer } })
     .then(function (response) {
-        a = response.data;
+        let name = response.data[0].name; // Имя
+        let descriptions = response.data[0].descriptions; // Описание
+        let data_start = response.data[0].data_start; // Начало хака
+        let data_end = response.data[0].data_end; // Окончание
+        let administrator = response.data[0].administrator; // ID администратора
+        let id = response.data[0].id; // ID записи
 
     })
     .catch(function (error) {
@@ -15,10 +20,16 @@ axios.get('http://127.0.0.1:8000/api/hack/', { headers: { Authorization: "Bearer
 
 
 
-axios.get('http://127.0.0.1:8000/api/criteria/1/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
-}})
-.then(function (response) {
-        a = response.data;
+axios.get('http://127.0.0.1:8000/api/criteria/1/', {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
+    .then(function (response) {
+        let name = response.data[0].name; // Имя
+        let max_ball = response.data[0].descriptions; // Макс балл
+        let hack = response.data[0].data_start; // ID хакатона
+        let id = response.data[0].id; // ID записи
 
     })
     .catch(function (error) {
@@ -30,10 +41,18 @@ axios.get('http://127.0.0.1:8000/api/criteria/1/', { headers: { Authorization: "
 
 
 
-axios.get('http://127.0.0.1:8000/api/points/hack/1/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
-}})
-.then(function (response) {
-        a = response.data;
+axios.get('http://127.0.0.1:8000/api/points/hack/1/', {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
+    .then(function (response) {
+        let ball = response.data[0].name; // Балл
+        let criteria = response.data[0].descriptions; // ID критерия
+        let hack = response.data[0].data_start; // ID хакатона
+        let team = response.data[0].data_start; // ID команды
+        let exspert = response.data[0].data_start; // ID эксперта
+        let id = response.data[0].id; // ID записи
 
     })
     .catch(function (error) {
@@ -41,15 +60,42 @@ axios.get('http://127.0.0.1:8000/api/points/hack/1/', { headers: { Authorization
 
     });
 
+// Получение списка баллов по exspert
 
+
+
+axios.get('http://127.0.0.1:8000/api/points/user/1/', {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
+    .then(function (response) {
+        let ball = response.data[0].name; // Балл
+        let criteria = response.data[0].descriptions; // ID критерия
+        let hack = response.data[0].data_start; // ID хакатона
+        let team = response.data[0].data_start; // ID команды
+        let exspert = response.data[0].data_start; // ID эксперта
+        let id = response.data[0].id; // ID записи
+
+    })
+    .catch(function (error) {
+        console.log(error);
+
+    });
 // Получение списка команд по хаку
 
 
 
-axios.get('http://127.0.0.1:8000/api/team/hack/1/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
-}})
-.then(function (response) {
-        a = response.data;
+axios.get('http://127.0.0.1:8000/api/team/hack/1/', {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
+    .then(function (response) {
+        let name = response.data[0].name; // Имя
+        let descriptions = response.data[0].descriptions; // Описание
+        let hack = response.data[0].data_start; // ID хакатона
+        let id = response.data[0].id; // ID записи
 
     })
     .catch(function (error) {
@@ -62,43 +108,26 @@ axios.get('http://127.0.0.1:8000/api/team/hack/1/', { headers: { Authorization: 
 
 
 
-axios.get('http://127.0.0.1:8000/api/team/description/1/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
-}})
-.then(function (response) {
-        a = response.data;
-
-    })
-    .catch(function (error) {
-        console.log(error);
-
-    });
-
-// Получение списка баллов по exspert
-
-
-
-axios.get('http://127.0.0.1:8000/api/points/user/1/', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
-}})
-.then(function (response) {
-        a = response.data;
-
-    })
-    .catch(function (error) {
-        console.log(error);
-
-    });
-    
-// Получение определенной команды по ее id - 1
-
-axios.get('http://127.0.0.1:8000/api/hack/1', { headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8" } })
+axios.get('http://127.0.0.1:8000/api/team/description/1/', {
+    headers: {
+        Authorization: "Bearer " + bearer
+    }
+})
     .then(function (response) {
-        a = response.data;
+        let name = response.data[0].name; // Имя
+        let descriptions = response.data[0].descriptions; // Описание
+        let hack = response.data[0].data_start; // ID хакатона
+        let id = response.data[0].id; // ID записи
 
     })
     .catch(function (error) {
         console.log(error);
 
     });
+
+
+
+
 
 // Создание хакатона
 var now = new Date();
@@ -106,29 +135,31 @@ var data_start = now.toISOString().split('T')[0]; // Получаем тольк
 var data_end = now.toISOString().split('T')[0]; // Получаем только дату в формате YYYY-MM-DD
 axios.post('http://127.0.0.1:8000/api/create/hack/',
     {
-        name: "sdasd",
-        descriptions: "sdasd",
-        data_start: data_start, // Преобразуем дату в строку ISO для корректной отправки
-        data_end: data_end
+        name: "sdasd", // Имя
+        descriptions: "sdasd", // Описание
+        data_start: data_start, // Дата старта
+        data_end: data_end // Дата окончания
     },
     {
         headers: {
-            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
+            Authorization: "Bearer " + bearer
         }
     })
     .then(function (response) {
-        console.log(response.data); // Обработка успешного ответа
+        let hack_id = response.data[0].hack_id // Вывод id созданного хака 
     })
     .catch(function (error) {
         console.log(error); // Обработка ошибки
     });
 
-// Генерация QR code для хакатона
+// Генерация QR code для хакатона и его скачивание
 axios.post('http://127.0.0.1:8000/api/generator/',
-    { hack_pk: 1 },
+    { hack_pk: 1 // ID хакатона
+
+     },
     {
         responseType: 'blob', headers: {
-            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
+            Authorization: "Bearer " + bearer
         }
     } // Указываем тип ответа
 )
@@ -153,16 +184,18 @@ axios.post('http://127.0.0.1:8000/api/generator/',
     });
 
 // Привязка Жюри по QR
-axios.get('http://127.0.0.1:8000/api/link/exspert/?code=8ff6f2be-8263-11ef-bca1-70d82354725d',
+
+let code = "8ff6f2be-8263-11ef-bca1-70d82354725d" // Код из QR кода
+axios.get('http://127.0.0.1:8000/api/link/exspert/?code=' + code, 
     {
         headers: {
-            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMwNjQxNTYxLCJpYXQiOjE3MjgwNDk1NjEsImp0aSI6ImM1MGRmODJjZDJiMDRhMjE4OGVkYjg4YmZhMDYyZWYyIiwidXNlcl9pZCI6NCwidXNlcm5hbWUiOiIxQyBcdTA0NDdcdTA0MzVcdTA0M2JcdTA0MzhcdTA0M2EgMjMifQ.Jfsvq_3EIyPZTnfq4fFckz51-y89tMrGIBfGexiN6o8"
+            Authorization: "Bearer " + bearer
         }
     } // Указываем тип ответа
 )
     .then(function (response) {
         // 
-        console.log(response.status)
+        console.log(response.status) // Вывод статуса об успешности
 
     })
     .catch(function (error) {
