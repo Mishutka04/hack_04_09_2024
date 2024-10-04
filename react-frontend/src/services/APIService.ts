@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import {ConnectionResponse, Vote, VoteResponse} from "../types/Vote.ts";
 import {Team} from "../types/Team.ts";
 
@@ -14,9 +14,19 @@ class APIService {
         });
     }
 
+    async createUser(username: string, hackathonId: string): Promise<string> {
+        try {
+            const response = await this.api.post<{ token: string }>('/users', {username, hackathonId});
+            return response.data.token;
+        } catch (error) {
+            console.error('Error creating user:', error);
+            throw error;
+        }
+    }
+
     async connect(key: string): Promise<ConnectionResponse> {
         try {
-            const response = await this.api.post<ConnectionResponse>('/connect', { key });
+            const response = await this.api.post<ConnectionResponse>('/connect', {key});
             return response.data;
         } catch (error) {
             console.error('Error connecting to hackathon:', error);
