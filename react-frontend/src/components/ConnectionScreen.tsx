@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Card } from './ui/';
 import { useAppState } from '../hooks/useAppState';
 import APIService from "../services/APIService.ts";
+import {Card} from "@/components/ui/card.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 const ConnectionScreen: React.FC = () => {
     const [connectionKey, setConnectionKey] = useState('');

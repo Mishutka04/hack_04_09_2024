@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Card } from './ui/';
 import { useAppState } from '../hooks/useAppState';
 import { validateVote } from '../utils/helpers';
 import {Team} from "../types/Team.ts";
 import APIService from "../services/APIService.ts";
 import {Vote} from "../types/Vote.ts";
+import {Card} from "@/components/ui/card.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 const VotingScreen: React.FC = () => {
     const [teams, setTeams] = useState<Team[]>([]);
