@@ -10,6 +10,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
+                sans: ['Manrope', 'sans-serif'],
                 heading: ['var(--font-heading)', ...fontFamily.sans],
                 body: ['var(--font-body)', ...fontFamily.sans]
             },
