@@ -2,7 +2,7 @@ import {Sheet, SheetTrigger, SheetContent} from "@/components/ui/sheet"
 import {Button} from "@/components/ui/button"
 import {Slider} from "@/components/ui/slider"
 import {Textarea} from "@/components/ui/textarea"
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import React, {useState, useEffect} from "react";
 import {
     Select,
@@ -14,20 +14,25 @@ import {
 } from "@/components/ui/select.tsx";
 import {useToast} from "@/hooks/use-toast.ts";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
+import APIService from "@/services/APIService.ts";
 
 export function VotingScreenX() {
     const [criteria, setCriteria] = useState<Criterion[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [criteriaValues, setCriteriaValues] = useState<Record<string, any>>({});
     const [hackathonId, setHackathonId] = useState<string | null>(null);
+    const [teamName, setTeamName] = useState<string | null>(null);
     const [teamId, setTeamId] = useState<string | null>(null);
     const [userToken, setUserToken] = useState<string | null>(null);
     const [toastMessage, setToastMessage] = useState<{ message: string, timestamp: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const {toast} = useToast();
+    const location = useLocation();
     const navigate = useNavigate()
 
     useEffect(() => {
+        setLoading(true);
+        
         const queryParams = new URLSearchParams(location.search);
         const queryHackathonId = queryParams.get('hackathonId');
         const queryUserToken = queryParams.get('userToken');
@@ -54,7 +59,17 @@ export function VotingScreenX() {
         const loadData = async () => {
             try {
                 await mockFetchCriteria().then(setCriteria);
-                await mockFetchTeams().then(setTeams);
+                
+                let currentTeams = teams;
+                if (currentTeams.length === 0) {
+                    currentTeams = await APIService.getTeams(queryHackathonId);
+                    setTeams(currentTeams);
+                }
+                const currentTeam = currentTeams.find(t => t.id === queryTeamId);
+                if (!currentTeam) {
+                    throw new Error("Error: team from queryTeamId not found in fetched teams. This is a bug.")
+                } 
+                setTeamName(currentTeam.name);
             } catch (error) {
                 setToastMessage({
                     message: `Error: Failed to connect to the hackathon.: ${error}`,
@@ -68,7 +83,9 @@ export function VotingScreenX() {
     }, [location.search]);
 
     useEffect(() => {
-        toast({description: toastMessage.message});
+        if (toastMessage !== null) {
+            toast({description: toastMessage.message});
+        }
     }, [toastMessage]);
 
     const handleCriterionChange = (id: string, value: any) => {
@@ -122,7 +139,7 @@ export function VotingScreenX() {
                     <div className="flex items-center gap-2">
                         {loading
                             ? <Skeleton className={"h-7 w-[200px] rounded-br mb-2"}/>
-                            : <h1 className="text-2xl font-bold">Team: {loading ? "t " : "f"}</h1>}
+                            : <h1 className="text-2xl font-bold">Team: {teamName}</h1>}
                     </div>
                     <div className="flex items-center gap-2">
                         {loading
@@ -267,20 +284,6 @@ const TeamLink: React.FC<{ team: Team, userToken: string, hackathonId: string }>
             {team.name}
         </Link>
     </Button>;
-};
-
-const mockFetchTeams = (): Promise<Team[]> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve([
-                {id: 'team-a', name: 'Team A'},
-                {id: 'team-b', name: 'Team B'},
-                {id: 'team-c', name: 'Team C'},
-                {id: 'team-d', name: 'Team D'},
-                {id: 'team-e', name: 'Team E'},
-            ]);
-        }, 800); // Simulate network delay
-    });
 };
 
 const mockFetchCriteria = (): Promise<Criterion[]> => {

@@ -34,7 +34,6 @@ export function ConnectionScreen() {
 
         const loadData = async () => {
             try {
-                await new Promise(resolve => setTimeout(resolve, 3000));
                 const data = await APIService.connect(queryHackathonId);
                 setHackathonName(data.hackathon.name)
                 setHackathonDates(`${data.hackathon.startDate.toLocaleDateString()} - ${data.hackathon.endDate.toLocaleDateString()}`);

@@ -4,6 +4,63 @@ import {Team} from "../types/Team.ts";
 import {ConnectionResponse} from "@/types/ConnectionResponse.ts";
 import {VoteResponse} from "@/types/VoteResponse.ts";
 
+const mockCreateUser = () => {
+    return new Promise<string>(resolve => {
+        setTimeout(() => {
+            resolve('mock-token-12345');
+        }, 2000);
+    });
+}
+
+const mockSubmitVote = () => {
+    return new Promise<VoteResponse>(resolve => {
+        setTimeout(() => {
+            resolve({
+                success: true,
+                message: 'Mock vote submitted successfully'
+            });
+        }, 2000);
+    });
+}
+
+const mockGetTeams = () => {
+    return new Promise<Team[]>((resolve) => {
+        setTimeout(() => {
+            const teams = [
+                {id: 'team-a', name: 'Team A'},
+                {id: 'team-b', name: 'Team B'},
+                {id: 'team-c', name: 'Team C'},
+                {id: 'team-d', name: 'Team D'},
+                {id: 'team-e', name: 'Team E'},
+            ];
+
+            // Shuffle the teams array to sort them in random order
+            for (let i = teams.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [teams[i], teams[j]] = [teams[j], teams[i]];
+            }
+
+            resolve(teams);
+        }, 1000); // Simulate network delay
+    });
+}
+
+const mockConnect = () => {
+    return new Promise<ConnectionResponse>(resolve => {
+        setTimeout(() => {
+            resolve({
+                success: true,
+                hackathon: {
+                    id: "1234",
+                    name: "Mock Hackathon",
+                    startDate: new Date("2023-01-01"),
+                    endDate: new Date("2023-01-02")
+                }
+            });
+        }, 2000);
+    });
+}
+
 class APIService {
     private api: AxiosInstance;
     private isMock: boolean = true;
@@ -17,13 +74,10 @@ class APIService {
         });
     }
 
+
     async createUser(username: string, hackathonId: string): Promise<string> {
         if (this.isMock) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve('mock-token-12345');
-                }, 2000);
-            });
+            return mockCreateUser();
         }
 
         try {
@@ -37,19 +91,7 @@ class APIService {
 
     async connect(key: string): Promise<ConnectionResponse> {
         if (this.isMock) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve({
-                        success: true,
-                        hackathon: {
-                            id: "1234",
-                            name: "Mock Hackathon",
-                            startDate: new Date("2023-01-01"),
-                            endDate: new Date("2023-01-02")
-                        }
-                    });
-                }, 2000);
-            });
+            return mockConnect();
         }
 
         try {
@@ -63,14 +105,7 @@ class APIService {
 
     async getTeams(hackathonId: string): Promise<Team[]> {
         if (this.isMock) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve([
-                        {id: 'team1', name: 'Mock Team 1'},
-                        {id: 'team2', name: 'Mock Team 2'},
-                    ]);
-                }, 2000);
-            });
+            return mockGetTeams();
         }
 
         try {
@@ -84,14 +119,7 @@ class APIService {
 
     async submitVote(vote: Vote): Promise<VoteResponse> {
         if (this.isMock) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve({
-                        success: true,
-                        message: 'Mock vote submitted successfully'
-                    });
-                }, 2000);
-            });
+            return mockSubmitVote();
         }
 
         try {
