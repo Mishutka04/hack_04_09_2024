@@ -19,10 +19,8 @@ RUN npm install -g http-server
 # Build the app using Vite directly
 RUN npm run build
 
-RUN (test -d /app/dist && echo "Directory /app/dist exists") || (echo "Directory /app/dist does not exist" && exit 1)
-
 # Expose the port the app runs on
 EXPOSE 8080
 
 # Define the command to run the app
-CMD ["ls", "/app/dist"]
+CMD ["http-server", "dist", "-p", "8080" ]
