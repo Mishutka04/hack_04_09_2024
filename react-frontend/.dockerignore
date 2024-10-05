@@ -1,7 +1,9 @@
-node_modules
-npm-debug.log
+README.md
 build
-.dockerignore
-**/.git
-**/.DS_Store
-**/node_modules
+dist
+node_modules
+LICENSE
+package-lock.json
+.git
+.DS_Store
+.env

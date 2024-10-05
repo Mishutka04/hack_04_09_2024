@@ -1,26 +1,16 @@
-# Use an official Node runtime as the base image
-FROM node:20
+FROM node:18-alpine3.17 as build
 
-# Set the working directory in the container
 WORKDIR /app
+COPY . /app
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Install a simple http server for serving static content
-RUN npm install -g http-server
-
-# Build the app using Vite directly
 RUN npm run build
 
-# Expose the port the app runs on
-EXPOSE 8080
+FROM ubuntu
+RUN apt-get update
+RUN apt-get install nginx -y
+COPY --from=build /app/dist /var/www/html/
+EXPOSE 80
+CMD ["nginx","-g","daemon off;"]
 
-# Define the command to run the app
-CMD ["http-server", "dist", "-p", "8080" ]
+
