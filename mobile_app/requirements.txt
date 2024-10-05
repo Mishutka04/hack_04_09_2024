@@ -12,3 +12,4 @@ pydub==0.25.1
 requests==2.32.3
 python-environ==0.4.54
 segno
+drf-yasg==1.21.7
