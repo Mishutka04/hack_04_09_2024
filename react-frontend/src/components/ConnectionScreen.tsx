@@ -74,13 +74,15 @@ export function ConnectionScreen() {
                     ? <Skeleton className={"h-7 w-[100px] mx-auto rounded-br"}/>
                     : <p className="mt-2 text-sm text-muted-foreground">{hackathonDates}</p>}
             </div>
-            <Card>
-                <CardContent className="p-6">
-                    <NameForm onSubmit={(data) => {
-                        handleUsernameSubmit(data.username)
-                    }}/>
-                </CardContent>
-            </Card>
+            {loading
+                ? <Skeleton className={"h-[200px] w-[400px] mx-auto rounded-br"}/>
+                : <Card>
+                    <CardContent className="p-6">
+                        <NameForm onSubmit={(data) => {
+                            handleUsernameSubmit(data.username)
+                        }}/>
+                    </CardContent>
+                </Card>}
         </div>
     </div>
 }
