@@ -25,5 +25,4 @@ RUN (test -d /app/dist && echo "Directory /app/dist exists") || (echo "Directory
 EXPOSE 8080
 
 # Define the command to run the app
-# CMD ["http-server", "dist"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["ls", "/app/dist"]
