@@ -13,9 +13,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Create a minimal tsconfig.json with path alias
-RUN echo '{"compilerOptions":{"baseUrl":".","paths":{"@/*":["./src/*"]}}}' > tsconfig.json
-
 # Build the app using Vite directly
 RUN npm run build
 
