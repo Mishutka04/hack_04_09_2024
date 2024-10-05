@@ -28,11 +28,11 @@ export function VotingScreen() {
     const [loading, setLoading] = useState(true);
     const {toast} = useToast();
     const location = useLocation();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
-        
+
         const queryParams = new URLSearchParams(location.search);
         const queryHackathonId = queryParams.get('hackathonId');
         const queryUserToken = queryParams.get('userToken');
@@ -46,7 +46,7 @@ export function VotingScreen() {
             navigate("/")
         }
 
-        if (!queryUserToken || !queryTeamId) {
+        if (!queryUserToken) {
             setToastMessage({message: "Error: Invalid URL parameters. This is a bug.", timestamp: Date.now()});
             setLoading(false);
             return;
@@ -59,16 +59,22 @@ export function VotingScreen() {
         const loadData = async () => {
             try {
                 await mockFetchCriteria().then(setCriteria);
-                
+
                 let currentTeams = teams;
+                let currentTeamId = queryTeamId;
                 if (currentTeams.length === 0) {
                     currentTeams = await APIService.getTeams(queryHackathonId);
                     setTeams(currentTeams);
                 }
-                const currentTeam = currentTeams.find(t => t.id === queryTeamId);
+                if (queryTeamId === null) {
+                    setTeamName(currentTeams[0].name);
+                    setTeamId(currentTeams[0].id);
+                    currentTeamId = currentTeams[0].id;
+                }
+                const currentTeam = currentTeams.find(t => t.id === currentTeamId);
                 if (!currentTeam) {
-                    throw new Error("Error: team from queryTeamId not found in fetched teams. This is a bug.")
-                } 
+                    throw new Error("Error: team from not found in fetched teams. This is a bug.")
+                }
                 setTeamName(currentTeam.name);
             } catch (error) {
                 setToastMessage({
@@ -101,11 +107,11 @@ export function VotingScreen() {
 
         if (allCriteriaSet) {
             setToastMessage({message: "Vote submitted successfully!", timestamp: Date.now()});
-            await APIService.submitVote({});
+            // await APIService.submitVote({});
         } else {
             setToastMessage({message: "Not all criteria have been set.", timestamp: Date.now()});
         }
-    };
+    }; //TODO: check QR user story
 
     return <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <header
