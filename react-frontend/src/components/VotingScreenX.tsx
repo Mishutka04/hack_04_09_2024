@@ -13,6 +13,7 @@ import {
     SelectValue
 } from "@/components/ui/select.tsx";
 import {useToast} from "@/hooks/use-toast.ts";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 export function VotingScreenX() {
     const [criteria, setCriteria] = useState<Criterion[]>([]);
@@ -37,14 +38,20 @@ export function VotingScreenX() {
             navigate("/")
         }
 
+        if (!queryUserToken || !queryTeamId) {
+            setToastMessage("Error: Invalid URL parameters. This is a bug.");
+            setLoading(false);
+            return;
+        }
+
         setHackathonId(queryHackathonId);
         setUserToken(queryUserToken);
         setTeamId(queryTeamId);
 
         const loadData = async () => {
             try {
-                mockFetchCriteria().then(setCriteria);
-                mockFetchTeams().then(setTeams);
+                await mockFetchCriteria().then(setCriteria);
+                await mockFetchTeams().then(setTeams);
             } catch (error) {
                 setToastMessage(`Error: Failed to connect to the hackathon.: ${error}`);
             }
@@ -107,32 +114,50 @@ export function VotingScreenX() {
             <div className="mx-auto max-w-3xl space-y-8">
                 <div className="grid gap-4">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold">Criteria</h2>
+                        {loading
+                            ? <Skeleton className={"h-7 w-[200px] rounded-br mb-2"}/>
+                            : <h1 className="text-2xl font-bold">Team: {loading ? "t " : "f"}</h1>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {loading
+                            ? <Skeleton className={"h-6 w-[80px] rounded-br mb-2"}/>
+                            : <h2 className="text-2xl font-bold">Criteria</h2>}
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {criteria.filter(c => c.type !== 'text').map((criterion) => criterion.type === 'slider' ? (
-                            <SliderCriterion
-                                key={criterion.id}
-                                criterion={criterion}
-                                onChange={handleCriterionChange}
-                                value={criteriaValues[criterion.id]}
-                            />
-                        ) : (
-                            <SelectCriterion
-                                key={criterion.id}
-                                criterion={criterion}
-                                onChange={handleCriterionChange}
-                                value={criteriaValues[criterion.id]}
-                            />
-                        ))}
+                        {loading
+                            ? <>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                                <Skeleton className={"h-12 w-auto rounded-br mb-2"}/>
+                            </>
+                            : criteria.filter(c => c.type !== 'text').map((criterion) => criterion.type === 'slider' ? (
+                                <SliderCriterion
+                                    key={criterion.id}
+                                    criterion={criterion}
+                                    onChange={handleCriterionChange}
+                                    value={criteriaValues[criterion.id]}
+                                />
+                            ) : (
+                                <SelectCriterion
+                                    key={criterion.id}
+                                    criterion={criterion}
+                                    onChange={handleCriterionChange}
+                                    value={criteriaValues[criterion.id]}
+                                />
+                            ))}
                     </div>
                 </div>
-                {criteria.filter(c => c.type === 'text').map((criterion) => <TextCriterion
-                    key={criterion.id}
-                    criterion={criterion}
-                    onChange={handleCriterionChange}
-                    value={criteriaValues[criterion.id]}
-                />)}
+                {loading
+                    ? <Skeleton className={"h-[150px] w-auto rounded-br mb-2"}/>
+                    : criteria.filter(c => c.type === 'text').map((criterion) => <TextCriterion
+                        key={criterion.id}
+                        criterion={criterion}
+                        onChange={handleCriterionChange}
+                        value={criteriaValues[criterion.id]}
+                    />)}
             </div>
         </main>
     </div>;
@@ -154,19 +179,17 @@ const SliderCriterion: React.FC<{
     onChange: (id: string, value: number) => void;
     value: number
 }> = ({criterion, onChange, value}) => {
-    return (
-        <div className="grid gap-1">
-            <label htmlFor={criterion.id} className="text-sm font-medium">
-                {criterion.label}
-            </label>
-            <Slider
-                defaultValue={[value || 0]}
-                max={criterion.max}
-                step={criterion.step}
-                onValueChange={([val]) => onChange(criterion.id, val)}
-            />
-        </div>
-    );
+    return <div className="grid gap-1">
+        <label htmlFor={criterion.id} className="text-sm font-medium">
+            {criterion.label}
+        </label>
+        <Slider
+            defaultValue={[value || 0]}
+            max={criterion.max}
+            step={criterion.step}
+            onValueChange={([val]) => onChange(criterion.id, val)}
+        />
+    </div>;
 };
 
 const SelectCriterion: React.FC<{
@@ -174,27 +197,23 @@ const SelectCriterion: React.FC<{
     onChange: (id: string, value: string) => void;
     value: string
 }> = ({criterion, onChange, value}) => {
-    return (
-        <div className="grid gap-1">
-            <label htmlFor={criterion.id} className="text-sm font-medium">
-                {criterion.label}
-            </label>
-            <Select value={value} onValueChange={(val) => onChange(criterion.id, val)}>
-                <SelectTrigger>
-                    <SelectValue placeholder={`Select ${criterion.label.toLowerCase()}`}/>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        {criterion.options?.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-        </div>
-    );
+    return <div className="grid gap-1">
+        <label htmlFor={criterion.id} className="text-sm font-medium">
+            {criterion.label}
+        </label>
+        <Select value={value} onValueChange={(val) => onChange(criterion.id, val)}>
+            <SelectTrigger>
+                <SelectValue placeholder={`Select ${criterion.label.toLowerCase()}`}/>
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    {criterion.options?.map((option) => <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                    </SelectItem>)}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    </div>;
 };
 
 const TextCriterion: React.FC<{
@@ -202,20 +221,18 @@ const TextCriterion: React.FC<{
     onChange: (id: string, value: string) => void;
     value: string
 }> = ({criterion, onChange, value}) => {
-    return (
-        <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">{criterion.label}</h2>
-            </div>
-            <Textarea
-                placeholder={criterion.placeholder}
-                rows={criterion.rows}
-                className="resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                value={value}
-                onChange={(e) => onChange(criterion.id, e.target.value)}
-            />
+    return <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">{criterion.label}</h2>
         </div>
-    );
+        <Textarea
+            placeholder={criterion.placeholder}
+            rows={criterion.rows}
+            className="resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            value={value}
+            onChange={(e) => onChange(criterion.id, e.target.value)}
+        />
+    </div>;
 };
 
 interface Team {
@@ -226,7 +243,7 @@ interface Team {
 const TeamLink: React.FC<{ team: Team, userToken: string, hackathonId: string }> = ({team, userToken, hackathonId}) => {
     return <Button asChild>
         <Link
-            to={`/vote?team=${team.id}&userToken=${userToken}&hackathonId=${hackathonId}`}
+            to={`/vote?teamId=${team.id}&userToken=${userToken}&hackathonId=${hackathonId}`}
             className="flex items-center gap-4 rounded-md bg-background p-2 text-muted-foreground hover:text-foreground"
         >
             <GroupIcon className="h-5 w-5"/>

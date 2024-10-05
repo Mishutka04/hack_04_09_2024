@@ -26,9 +26,8 @@ export function ConnectionScreen() {
         const queryHackathonId = queryParams.get('hackathonId');
 
         if (!queryHackathonId) {
-            setToastMessage("Error: No hackathon ID provided in the URL.");
-            setLoading(false);
-            return;
+            setToastMessage("Error: No hackathon ID provided in the URL. Redirecting to landing page...");
+            navigate("/")
         }
 
         setHackathonId(queryHackathonId);
