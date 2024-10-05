@@ -13,11 +13,13 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Install a simple http server for serving static content
+RUN npm install -g http-server
+
 # Build the app using Vite directly
 RUN npm run build
 
-# Install a simple http server for serving static content
-RUN npm install -g http-server
+RUN test -d /app/dist || (echo "Directory /app/dist does not exist" && exit 1)
 
 # Expose the port the app runs on
 EXPOSE 8080
