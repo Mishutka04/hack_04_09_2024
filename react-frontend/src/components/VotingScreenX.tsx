@@ -22,7 +22,7 @@ export function VotingScreenX() {
     const [hackathonId, setHackathonId] = useState<string | null>(null);
     const [teamId, setTeamId] = useState<string | null>(null);
     const [userToken, setUserToken] = useState<string | null>(null);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState<{ message: string, timestamp: number } | null>(null);
     const [loading, setLoading] = useState(true);
     const {toast} = useToast();
     const navigate = useNavigate()
@@ -34,12 +34,15 @@ export function VotingScreenX() {
         const queryTeamId = queryParams.get('teamId');
 
         if (!queryHackathonId) {
-            setToastMessage("Error: No hackathon ID provided in the URL. Redirecting to landing page...");
+            setToastMessage({
+                message: "Error: No hackathon ID provided in the URL. Redirecting to landing page...",
+                timestamp: Date.now()
+            });
             navigate("/")
         }
 
         if (!queryUserToken || !queryTeamId) {
-            setToastMessage("Error: Invalid URL parameters. This is a bug.");
+            setToastMessage({message: "Error: Invalid URL parameters. This is a bug.", timestamp: Date.now()});
             setLoading(false);
             return;
         }
@@ -53,7 +56,10 @@ export function VotingScreenX() {
                 await mockFetchCriteria().then(setCriteria);
                 await mockFetchTeams().then(setTeams);
             } catch (error) {
-                setToastMessage(`Error: Failed to connect to the hackathon.: ${error}`);
+                setToastMessage({
+                    message: `Error: Failed to connect to the hackathon.: ${error}`,
+                    timestamp: Date.now()
+                });
             }
             setLoading(false);
         };
@@ -62,7 +68,7 @@ export function VotingScreenX() {
     }, [location.search]);
 
     useEffect(() => {
-        toast({description: toastMessage});
+        toast({description: toastMessage.message});
     }, [toastMessage]);
 
     const handleCriterionChange = (id: string, value: any) => {
@@ -77,9 +83,9 @@ export function VotingScreenX() {
         );
 
         if (allCriteriaSet) {
-            setToastMessage("Vote submitted successfully!");
+            setToastMessage({message: "Vote submitted successfully!", timestamp: Date.now()});
         } else {
-            setToastMessage("Not all criteria have been set.");
+            setToastMessage({message: "Not all criteria have been set.", timestamp: Date.now()});
         }
     };
 
@@ -87,7 +93,7 @@ export function VotingScreenX() {
         <header
             className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4">
             <Sheet>
-                <SheetTrigger asChild>
+                <SheetTrigger asChild disabled={loading}>
                     <Button size="icon" variant="outline">
                         <MenuIcon className="h-5 w-5"/>
                         <span className="sr-only">Toggle Menu</span>
@@ -136,14 +142,14 @@ export function VotingScreenX() {
                             : criteria.filter(c => c.type !== 'text').map((criterion) => criterion.type === 'slider' ? (
                                 <SliderCriterion
                                     key={criterion.id}
-                                    criterion={criterion}
+                                    criterion={criterion as Criterion & { content: SliderCriterionContent }}
                                     onChange={handleCriterionChange}
                                     value={criteriaValues[criterion.id]}
                                 />
                             ) : (
                                 <SelectCriterion
                                     key={criterion.id}
-                                    criterion={criterion}
+                                    criterion={criterion as Criterion & { content: SelectCriterionContent }}
                                     onChange={handleCriterionChange}
                                     value={criteriaValues[criterion.id]}
                                 />
@@ -154,7 +160,7 @@ export function VotingScreenX() {
                     ? <Skeleton className={"h-[150px] w-auto rounded-br mb-2"}/>
                     : criteria.filter(c => c.type === 'text').map((criterion) => <TextCriterion
                         key={criterion.id}
-                        criterion={criterion}
+                        criterion={criterion as Criterion & { content: TextCriterionContent }}
                         onChange={handleCriterionChange}
                         value={criteriaValues[criterion.id]}
                     />)}
@@ -163,19 +169,30 @@ export function VotingScreenX() {
     </div>;
 }
 
+
+interface SliderCriterionContent {
+    max: number;
+    step: number;
+}
+
+interface SelectCriterionContent {
+    options: { value: string; label: string }[];
+}
+
+interface TextCriterionContent {
+    rows: number;
+    placeholder: string;
+}
+
 interface Criterion {
     id: string;
     label: string;
     type: 'slider' | 'select' | 'text';
-    max?: number;
-    step?: number;
-    options?: { value: string; label: string }[];
-    rows?: number;
-    placeholder?: string;
+    content: SliderCriterionContent | SelectCriterionContent | TextCriterionContent;
 }
 
 const SliderCriterion: React.FC<{
-    criterion: Criterion;
+    criterion: Criterion & { content: SliderCriterionContent };
     onChange: (id: string, value: number) => void;
     value: number
 }> = ({criterion, onChange, value}) => {
@@ -185,15 +202,15 @@ const SliderCriterion: React.FC<{
         </label>
         <Slider
             defaultValue={[value || 0]}
-            max={criterion.max}
-            step={criterion.step}
+            max={criterion.content.max}
+            step={criterion.content.step}
             onValueChange={([val]) => onChange(criterion.id, val)}
         />
     </div>;
 };
 
 const SelectCriterion: React.FC<{
-    criterion: Criterion;
+    criterion: Criterion & { content: SelectCriterionContent };
     onChange: (id: string, value: string) => void;
     value: string
 }> = ({criterion, onChange, value}) => {
@@ -207,7 +224,7 @@ const SelectCriterion: React.FC<{
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
-                    {criterion.options?.map((option) => <SelectItem key={option.value} value={option.value}>
+                    {criterion.content.options.map((option) => <SelectItem key={option.value} value={option.value}>
                         {option.label}
                     </SelectItem>)}
                 </SelectGroup>
@@ -217,7 +234,7 @@ const SelectCriterion: React.FC<{
 };
 
 const TextCriterion: React.FC<{
-    criterion: Criterion;
+    criterion: Criterion & { content: TextCriterionContent };
     onChange: (id: string, value: string) => void;
     value: string
 }> = ({criterion, onChange, value}) => {
@@ -226,8 +243,8 @@ const TextCriterion: React.FC<{
             <h2 className="text-2xl font-bold">{criterion.label}</h2>
         </div>
         <Textarea
-            placeholder={criterion.placeholder}
-            rows={criterion.rows}
+            placeholder={criterion.content.placeholder}
+            rows={criterion.content.rows}
             className="resize-none rounded-lg border border-input bg-background p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             value={value}
             onChange={(e) => onChange(criterion.id, e.target.value)}
@@ -270,34 +287,40 @@ const mockFetchCriteria = (): Promise<Criterion[]> => {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve([
-                {id: 'innovation', label: 'Innovation', type: 'slider', max: 5, step: 1},
-                {id: 'design', label: 'Design', type: 'slider', max: 5, step: 1},
-                {id: 'functionality', label: 'Functionality', type: 'slider', max: 5, step: 1},
-                {id: 'presentation', label: 'Presentation', type: 'slider', max: 5, step: 1},
-                {id: 'impact', label: 'Impact', type: 'slider', max: 5, step: 1},
+                {id: 'innovation', label: 'Innovation', type: 'slider', content: {max: 5, step: 1}},
+                {id: 'design', label: 'Design', type: 'slider', content: {max: 5, step: 1}},
+                {id: 'functionality', label: 'Functionality', type: 'slider', content: {max: 5, step: 1}},
+                {id: 'presentation', label: 'Presentation', type: 'slider', content: {max: 5, step: 1}},
+                {id: 'impact', label: 'Impact', type: 'slider', content: {max: 5, step: 1}},
                 {
                     id: 'city',
                     label: 'City',
                     type: 'select',
-                    options: [
-                        {value: 'moscow', label: 'Moscow'},
-                        {value: 'saint-petersburg', label: 'Saint Petersburg'},
-                        {value: 'novosibirsk', label: 'Novosibirsk'},
-                    ]
+                    content: {
+                        options: [
+                            {value: 'moscow', label: 'Moscow'},
+                            {value: 'saint-petersburg', label: 'Saint Petersburg'},
+                            {value: 'novosibirsk', label: 'Novosibirsk'},
+                        ]
+                    }
                 },
                 {
                     id: 'comments',
                     label: 'Comments',
                     type: 'text',
-                    rows: 4,
-                    placeholder: 'Enter your comments here...'
+                    content: {
+                        rows: 4,
+                        placeholder: 'Enter your comments here...'
+                    }
                 },
                 {
                     id: 'notes',
                     label: 'Notes',
                     type: 'text',
-                    rows: 4,
-                    placeholder: 'Enter your notes here...'
+                    content: {
+                        rows: 4,
+                        placeholder: 'Enter your notes here...'
+                    }
                 },
             ]);
         }, 2000);
