@@ -1,7 +1,12 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {Button} from "@/components/ui/button"
 
 export default function Component() {
+    const origin = window.location.origin;
+    const basePath = import.meta.env.BASE_URL || '';
+    const fullUrl = `${origin}${basePath}connect?hackathonId=123`;
+    const demoQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${fullUrl.toString()}`
+    
     return <div className="flex flex-col min-h-[100dvh]">
         <header className="px-4 lg:px-6 h-14 flex items-center">
             <h1 className="text-2xl font-bold">HackJudge</h1>
@@ -47,7 +52,7 @@ export default function Component() {
                         </div>
                     </div>
                     <img
-                        src={getDemoQrUrl()}
+                        src={demoQrUrl}
                         width="300"
                         height="300"
                         alt="Demo QR"
@@ -188,11 +193,4 @@ function GavelIcon(props) {
             <path d="m21 11-8-8"/>
         </svg>
     )
-}
-
-function getDemoQrUrl(): string {
-    // const location = useLocation();
-    const fullUrl = new URL("/connect?hackathonId=123", window.location.origin);
-
-    return `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${fullUrl.toString()}`
 }
