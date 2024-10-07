@@ -194,5 +194,5 @@ function getDemoQrUrl(): string {
     // const location = useLocation();
     const fullUrl = new URL("/connect?hackathonId=123", window.location.origin);
 
-    return `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data='${fullUrl.toString()}'`
+    return `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${fullUrl.toString()}`
 }
