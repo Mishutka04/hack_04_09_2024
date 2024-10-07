@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 
 export default function Component() {
     return <div className="flex flex-col min-h-[100dvh]">
@@ -25,7 +25,38 @@ export default function Component() {
                 </div>
             </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-muted">
+            <div className="container px-4 md:px-6 mx-auto">
+                <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+                    <div className="flex flex-col justify-center space-y-4">
+                        <div className="space-y-2">
+                            <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                                Try demo version
+                            </h1>
+                            <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                                Scan QR or click button below to see what we can.
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-2 min-[600px]:flex-row">
+                            <Link
+                                to="connect?hackathonId=123"
+                                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                            >
+                                Demo {'\u2197'}
+                            </Link>
+                        </div>
+                    </div>
+                    <img
+                        src={getDemoQrUrl()}
+                        width="300"
+                        height="300"
+                        alt="Demo QR"
+                        className="mx-auto aspect-square overflow-hidden rounded-xl object-cover order-last p-10 bg-white"
+                    />
+                </div>
+            </div>
+        </section>
+        <section className="w-full py-12 md:py-24 lg:py-32">
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="grid gap-6 md:grid-cols-2 lg:gap-12">
                     <div className="flex flex-col items-start space-y-4">
@@ -49,7 +80,7 @@ export default function Component() {
                 </div>
             </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
             <div className="container px-4 md:px-6 ">
                 <div className="space-y-2">
                     <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">How to Join the
@@ -150,11 +181,18 @@ function GavelIcon(props) {
             strokeLinecap="round"
             strokeLinejoin="round"
         >
-            <path d="m14.5 12.5-8 8a2.119 2.119 0 1 1-3-3l8-8" />
-            <path d="m16 16 6-6" />
-            <path d="m8 8 6-6" />
-            <path d="m9 7 8 8" />
-            <path d="m21 11-8-8" />
+            <path d="m14.5 12.5-8 8a2.119 2.119 0 1 1-3-3l8-8"/>
+            <path d="m16 16 6-6"/>
+            <path d="m8 8 6-6"/>
+            <path d="m9 7 8 8"/>
+            <path d="m21 11-8-8"/>
         </svg>
     )
+}
+
+function getDemoQrUrl(): string {
+    // const location = useLocation();
+    const fullUrl = new URL("/connect?hackathonId=123", window.location.origin);
+
+    return `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data='${fullUrl.toString()}'`
 }
